@@ -1,6 +1,7 @@
 package com.zygotecnologia.zygotv.main.ui
 
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -74,6 +75,7 @@ class DetailFragment : Fragment() {
     }
 
     private fun setOverview(overview: String?) {
+        binding.overview.movementMethod = ScrollingMovementMethod()
         binding.overview.text = overview
     }
 
