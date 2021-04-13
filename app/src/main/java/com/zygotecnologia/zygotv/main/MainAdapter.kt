@@ -14,7 +14,8 @@ import com.zygotecnologia.zygotv.R.id.tv_show_title
 import com.zygotecnologia.zygotv.model.Show
 import com.zygotecnologia.zygotv.utils.ImageUrlBuilder
 
-class MainAdapter(private val shows: List<Show>) : RecyclerView.Adapter<MainAdapter.ViewHolder>() {
+class MainAdapter(var mItemClickListener: OnClickDetailsInterface, private var shows: List<Show>) :
+    RecyclerView.Adapter<MainAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.show_item, parent, false)
@@ -25,19 +26,36 @@ class MainAdapter(private val shows: List<Show>) : RecyclerView.Adapter<MainAdap
         holder.bind(shows[position])
     }
 
+    interface OnClickDetailsInterface {
+        fun onItemClick(clickedItem: Int, shows: List<Show>)
+    }
+
     override fun getItemCount() = shows.size
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    fun setElementList(show: List<Show>) {
+        shows = show
+        this.notifyDataSetChanged()
+    }
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+        View.OnClickListener {
+
+        init {
+            this.itemView.setOnClickListener(this)
+        }
 
         fun bind(show: Show) {
             val textView: TextView = itemView.findViewById(tv_show_title)
             textView.text = show.name
-
             val imageView: ImageView = itemView.findViewById(iv_show_poster)
             Glide.with(itemView)
                 .load(show.posterPath?.let { ImageUrlBuilder.buildPosterUrl(it) })
                 .apply(RequestOptions().placeholder(R.drawable.image_placeholder))
                 .into(imageView)
+        }
+
+        override fun onClick(v: View?) {
+            mItemClickListener.onItemClick(adapterPosition, shows)
         }
     }
 }
